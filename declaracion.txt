@@ -1,0 +1,162 @@
+﻿BITACORA DE DESARROLLO
+
+Salam DataBase, subsistema aislado creado para implementarlo al proyecto SALAM, crea una base de datos para almacenar la informacion de inventario
+y ventas en tablas con una estructura definida en Data/database.sql
+
+Distribucion de responsabilidades:
+
+Data : se encarga de guardar la base de datos y scripts relacionados incluyendo la estructura de las tablas y relaciones entre ellas.
+Forms : se encarga de la interfaz de usuario, permitiendo a los usuarios interactuar con la base de datos a través de formularios y vistas.
+Models : se encarga de la representación de los datos mediante entidades DTO
+Repositories : se encarga del acceso a datos, implementando las operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre las entidades DTO.
+Services : se encarga de la lógica de negocio, coordinando las operaciones entre los repositorios y los formularios, y aplicando reglas de negocio según sea necesario.
+Utils : se encarga de modulos auxiliares
+
+CATEGORIA
+   │
+   └──< SUBCATEGORIA
+             │
+             └──< PRODUCTO >── MARCA
+                    │
+                    └──< PRESENTACION
+                              │
+                              ├── INVENTARIO
+                              │
+                              └── MOVIMIENTO_INVENTARIO
+
+
+PROVEEDOR
+   │
+   └──< COMPRA
+            │
+            └──< DETALLE_COMPRA >── PRESENTACION
+
+
+CLIENTE
+   │
+   └──< VENTA
+            │
+            └──< DETALLE_VENTA >── PRESENTACION
+
+ilustracion de esquema de base de datos
+
+el sistema cuenta con varias entidades para describir movimientos, en primer lugar las categorias son muy generales respecto a los productos,
+luego las subcategorias diferencian entre modelos(categoria) y tipos especificos de esos modelos(subcategoria), luego los productos son los modelos
+especificos de cada subcategoria, y finalmente las presentaciones son las variantes de cada producto, por ejemplo un producto puede tener varias presentaciones como diferentes tamaños o colores.
+
+para registrar compras a proveedores se usa la tabla compra y el detalle de la compra se hace en la tabla detalle_compra, donde se especifica la presentacion del producto comprado, la cantidad y el precio de compra.
+igualmente para venta con la misma dinamica.
+
+movimiento inventario sirve para cuando se requiera hacer una operacion de movimiento de inventario por ejemplo cuando se hace un ajuste de inventario o una transferencia entre almacenes,
+se registra en esta tabla especificando la presentacion del producto, la cantidad y el tipo de movimiento (entrada, salida o desempaquetado).
+
+Objetivos:
+
+1. permitir el registro de productos, proveedores y clientes en la base de datos.           LISTO
+2. permitir el registro de compras y ventas, incluyendo el detalle de cada transacción.     LISTO
+3. permitir el registro de movimientos de inventario, incluyendo ajustes y transferencias.  EN PROCESO
+
+
+Ejecucion:
+
+- 12/10/2026:
+-- Implementacion de la interfaz de usuario para el registro de productos, proveedores y clientes.
+-- Implementacion de la logica de insercion de productos, proveedores y clientes en la base de datos.
+
+- 13/10/2026:
+-- Implementar el insertador de presentaciones, para poder registrar compras.
+
+- 14/10/2026:
+-- Implementar el sistema de compras con UI y logica de negocio, incluyendo el detalle de cada compra.
+-- Implementado hasta el registro de compras, el detalle de compras queda pendiente, error solucionado.
+
+- 16/10/2026:
+-- Implementado el sistema de compras y detalle de compras
+-- El precio del producto se inserta automaticamente en el detalle de compra, se puede modificar si es necesario.
+
+- 18/10/2026:
+-- Agregar segmento de movimiento de inventario para registrar ajustes y transferencias de inventario. 
+    (solo para agregar presentaciones ya existentes, no para agregar nuevas presentaciones)) LISTO
+-- Al momento de registrar una compra se debe agregar al inventario las nuevas presentaciones LISTO
+
+
+--- Pendiente actualizar el precio de la presentacion en su respectiva tabla, separar responsabilidades, refactorizar nombres a ingles.
+
+- 19/10/2026:
+ 
+-- actualizar el precio de la presentacion en su respectiva tabla LISTO
+-- Reformateo de los servicios de instancia a clase LISTO   
+
+- 20/10/2026:
+-- Agregar las predicciones de la marca LISTO
+
+
+- 24/10/2026
+-- Diseñar la interfaz ventas, primero realizar el bosquejo de relaciones para ventas y detalle_ventas PARCIALMENTE
+ "Se agregaron las ventanas, existe un error al aplicar los descuentos, debe ser corregido en la proxima sesion0"
+
+ - 15/11/2026
+ -- Ventas desarrollado exitosamente, se agrego la funcionalidad de descuentos y se corrigieron errores en el calculo de totales.
+ -- Correcion en la carga de la consola.
+
+### Inicio de version 1.0.0
+
+Ventana de Login y Singup (iniciar sesion y registrarse) LISTO
+Ventana principal (Acceso a compra, ventas, inventario, estadisticas, etc) LISTO 
+Ventana de registro ventas LISTO
+Ventana de registro compras LISTO
+Ventana de estadisticas
+Ventana de visualizacion de registros (compras y ventas): debe permitir registrar cuando es un pago por transferencia o efectivo
+Ventana de inventario (tambien permite realizar eventos de inventario como apertura paquete etc)
+
+
+Ventanas emergentes de agregacion de productos, presentaciones, marcas, proveedores, etc
+Ventana de visualizacion de query sql en consola (para fines de depuracion)
+Subsistema de deudas, hacia clientes y hacia proveedores
+
+
+Todos los movimientos deben ser registrados en un LOG
+
+- 15/11/2026
+-- Se requiere usuario administrador y usuario vendedor , el primero tiene acceso a todas las funciones del sistema, 
+mientras que el segundo solo puede registrar ventas y ver inventario. COMPLETADO
+-- Realizar la entrada de la aplicacion, se debe agregar un inicio de sesion y registro para poder acceder a la aplicacion CORRECTO
+
+- 18/11/2026
+-- Realizar ventana principal con los accesos a las ventanas derivadas, agregando una visualizacion de compras recientes y ventas recientes. COMPLETADO
+-- Agregar ventana derivada: registro ventas, registro compras. COMPLETADO
+-- Agregar panel de movimientos recientes. COMPLETADO
+-- Agregar panel de detalles de movimientos recientes, al seleccionar un movimiento en el panel de movimientos recientes, se debe mostrar el detalle del movimiento seleccionado. COMPLETADO
+-- Configurar la ventana de registro de ventas y compras. COMPLETADO
+-- Correcion del query de registro de ventas y compras (almacenar datos numericos correctamente). COMPLETADO
+-- El registrador de compras y ventas debe corroborar que haya suficiente inventario para realizar la venta. COMPLETADO
+
+- 19/11/2026
+-- Corregir la visualizacion de movimientos recientes, actualmente no se visualizan correctamente los datos de los movimientos. COMPLETADO
+-- Corregir los validadores para que no lanzen excepciones al momento de registrar ventas y compras, actualmente se lanzan excepciones al momento de registrar ventas y compras. COMPLETADO 
+-- En ventas, cuando se tenga un item en el detalle de la venta, se debe mostrar en el stock menos el stock del item agregado, para que el usuario sepa cuanto stock queda disponible para la venta. COMPLETADO
+-- En ventas y compras, cuando se inserte una presentacion existente se actualizan los valores de cantidad, descuento y subtotal. COMPLETADO
+-- Hacer funcionar los botones de eliminar item y limpiar items en ventas y compras. COMPLETADO
+-- Agregar la columna total donde se aplica el descuento, subtotal no aplica descuento, es el precio total sin descuento, el total es el precio final con descuento. COMPLETADO
+-- Boton de actualizar ventas recientes. COMPLETADO
+-- Agregar ventana clientes. COMPLETADO
+
+- 20/11/2026
+-- Corregir el esquema de la tabla clientes para que documento sea primary key. COMPLETADO
+-- Corregir en ventas el poder modificar el costo unitario, se debe hacer desde un panel de administrador. COMPLETADO
+-- Agregar ventana proveedores. COMPLETADO
+-- Modificaciones a base de datos para agregar tipo documento y opciones CC y NIT. COMPLETADO
+
+
+- 21/11/2026
+-- Agregar ventana de agregar marcas. COMPLETADO
+-- Agregar ventana de agregar producto. COMPLETADO
+-- Agregar ventana de categoria. COMPLETADO
+-- Agregar ventana de subcategoria. COMPLETADO
+-- Centralizacion de colleciones para toda la app. COMPLETADO
+-- Agregar ventana de agregar presentacion. COMPLETADO
+-- Agregar ventana de busqueda presentacion.
+
+
+--- Observaciones: 
+- La creacion del codigo para un producto debe ser creada automaticamente apartir de CATEGORIA-SUBCATEGORIA-NOMBRE-CAPACIDAD-UNIDADES_CAPACIDAD
