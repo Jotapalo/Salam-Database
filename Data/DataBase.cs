@@ -6,17 +6,29 @@ namespace Salam_Database.Data
 {
     public static class Database
     {
-        private static readonly string DataFolder =
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+        private static readonly string ApplicationDataFolder =
+            Path.Combine(
+                Environment.GetFolderPath(
+                    Environment.SpecialFolder.LocalApplicationData),
+                "Salam Database");
 
         private static readonly string DatabasePath =
-           "E:\\proyectos\\SALAM db prospect\\Salam Database\\Data\\negocio.db"; //parche temporal para que funcione con la base de datos
-        /*Path.Combine(DataFolder, "negocio.db");*/
+            Path.Combine(ApplicationDataFolder, "negocio.db");
 
+        private static readonly string SourceDataFolder =
+            Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "Data");
 
+        private static readonly string ScriptPath =
+            Path.Combine(SourceDataFolder, "database.sql");
+
+        private static readonly string ScriptPathSeed =
+            Path.Combine(SourceDataFolder, "seed.sql");
 
         private static readonly string ConnectionString =
-            "Data Source=" + DatabasePath + ";Version=3;Foreign Keys=True;Encoding=UTF-8";
+            "Data Source=" + DatabasePath +
+            ";Version=3;Foreign Keys=True;Encoding=UTF-8;";
 
         public static SQLiteConnection GetConnection()
         {
@@ -30,26 +42,43 @@ namespace Salam_Database.Data
 
         public static void Initialize()
         {
-            if (!Directory.Exists(DataFolder))
+            Directory.CreateDirectory(ApplicationDataFolder);
+
+            if (File.Exists(DatabasePath))
             {
-                Directory.CreateDirectory(DataFolder);
+                return;
             }
 
-            if (!File.Exists(DatabasePath))
+            if (!File.Exists(ScriptPath))
             {
-                SQLiteConnection.CreateFile(DatabasePath);
+                throw new FileNotFoundException(
+                    "No se encontró el script de creación de la base de datos.",
+                    ScriptPath);
+            }
+            if (!File.Exists(ScriptPathSeed))
+            {
+                throw new FileNotFoundException(
+                    "No se encontró el script de semilla de la base de datos.",
+                    ScriptPathSeed);
 
-                using (SQLiteConnection connection = GetConnection())
-                {
-                    string script = File.ReadAllText(
-                        Path.Combine(DataFolder, "database.sql"));
+            }
 
-                    using (SQLiteCommand command =
-                        new SQLiteCommand(script, connection))
-                    {
-                        command.ExecuteNonQuery();
-                    }
-                }
+            SQLiteConnection.CreateFile(DatabasePath);
+
+            using (SQLiteConnection connection = GetConnection())
+            using (SQLiteCommand command = new SQLiteCommand(
+                File.ReadAllText(ScriptPath),
+                connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
+            using (SQLiteConnection connection = GetConnection())
+            using (SQLiteCommand command = new SQLiteCommand(
+                File.ReadAllText(ScriptPathSeed),
+                connection))
+            {
+                command.ExecuteNonQuery();
             }
         }
     }

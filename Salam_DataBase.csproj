@@ -249,8 +249,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\database.sql" />
-    <Content Include="Data\seed.sql" />
+    <Content Include="Data\database.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\seed.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="declaracion.txt" />
   </ItemGroup>
   <ItemGroup />

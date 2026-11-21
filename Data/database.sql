@@ -1,5 +1,7 @@
 PRAGMA foreign_keys = ON;
 
+BEGIN;
+
 -- =========================================================
 -- CATEGORIA
 -- =========================================================
@@ -183,10 +185,8 @@ CREATE TABLE IF NOT EXISTS proveedor (
 
     contacto TEXT,
 
-    estado INTEGER NOT NULL DEFAULT 1
-    tipo_documento	TEXT NOT NULL DEFAULT 'NIT',
-
-	CHECK("tipo_documento" IN ('CC', 'NIT'))
+    estado INTEGER NOT NULL DEFAULT 1,
+    tipo_documento	TEXT NOT NULL DEFAULT 'NIT' CHECK("tipo_documento" IN ('CC', 'NIT'))
 );
 
 
@@ -354,3 +354,5 @@ CREATE TABLE IF NOT EXISTS usuarios_sistema (
         )
     )
 );
+
+COMMIT;

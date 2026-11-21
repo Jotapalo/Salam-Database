@@ -122,3 +122,19 @@ VALUES
     2,
     30
 );
+
+INSERT INTO usuarios_sistema (
+    nombre,
+    usuario,
+    contrasena,
+    rol,
+    estado
+)
+VALUES 
+(
+    'Juan Pablo Lozano',
+    'JP',
+    '123',
+    'ADMINISTRADOR',
+    1
+)
